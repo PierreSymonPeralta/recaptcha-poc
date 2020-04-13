@@ -1,35 +1,40 @@
 <html>
   <head>
-  <script>
-    function onSubmit(token) {
-      alert('thanks ' + document.getElementById('field').value);
-    }
-
-    function validate(event) {
-      event.preventDefault();
-      if (!document.getElementById('field').value) {
-        alert("You must add text to the required field");
-      } else {
-        grecaptcha.execute();
+    <title>Recaptcha test app</title>
+    <meta name="title" content="test recaptcha">
+    <meta name="description" content="test recaptcha desc">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+      body {
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
-    }
-
-    function onload() {
-      var element = document.getElementById('submit');
-      element.onclick = validate;
-    }
-  </script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    </style>
   </head>
   <body>
     <form>
-      Name: (required) <input id="field" name="field">
+      <h3>Invisible recaptcha</h3>
       <div id='recaptcha' class="g-recaptcha"
           data-sitekey="6Lc8BukUAAAAAJRxj0SrDFNgDh6u3mxGZKskUNHF"
-          data-callback="onSubmit"
-          data-size="invisible"></div>
-      <button id='submit'>submit</button>
+          data-callback="callback"
+          data-size="invisible">
+      </div>
     </form>
-    <script>onload();</script>
+    
+    <script>
+
+      window.addEventListener('load', () => {
+        console.log('page load');
+        grecaptcha.execute();
+        setTimeout(() => {
+          callback();
+        }, 5000)
+      });
+
+
+      function callback(token) {
+        console.log(token);
+        alert('callback triggered');
+      }
+    </script>
   </body>
 </html>
