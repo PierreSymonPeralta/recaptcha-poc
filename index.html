@@ -3,7 +3,7 @@
     <title>Recaptcha test app</title>
     <meta name="title" content="test recaptcha">
     <meta name="description" content="test recaptcha desc">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfgF-kUAAAAAE1EJ-BxXm1On5xgLaVv83IZkA08"></script>
     <style>
       body {
         font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,43 +11,38 @@
     </style>
   </head>
   <body>
-    <form>
       <h3>Invisible recaptcha</h3>
-      <div id='recaptcha' class="g-recaptcha"
-          data-sitekey="6Lc8BukUAAAAAJRxj0SrDFNgDh6u3mxGZKskUNHF"
-          data-callback="callback"
-          data-size="invisible">
-      </div>
-    </form>
     
     <script>
 
       window.addEventListener('load', () => {
-        console.log('page load');
-        grecaptcha.execute();
+      
+        grecaptcha.ready(function() {
+          grecaptcha.execute('6LfgF-kUAAAAAE1EJ-BxXm1On5xgLaVv83IZkA08', {action: 'homepage'}).then(function(token) {
+            console.log(token)
+            postData('https://www.google.com/recaptcha/api/siteverify', { 
+              secret: '6LfgF-kUAAAAAJrYqWwr0Xyl2Zh4bDFQpHVuvFSD',
+              response: token
+            })
+            .then((data) => {
+              console.log(data);
+              window._res =  data;// JSON data parsed by `response.json()` call
+              alert('verification done');
+            }).catch((err) => {
+              console.log(err);
+              alert('verification error');
+            });
+          });
+        });
       });
 
-
-      function callback(token) {
-        console.log(token);
-        postData('https://www.google.com/recaptcha/api/siteverify', { 
-          secret: '6Lc8BukUAAAAAOzp15flucIgDCJcufHSbPhlw_2T',
-          response: token
-        })
-        .then((data) => {
-          console.log(data); // JSON data parsed by `response.json()` call
-          alert('callback triggered');
-        });
-      }
 
       // Example POST method implementation:
       async function postData(url = '', data = {}) {
         // Default options are marked with *
         const response = await fetch(url, {
           method: 'POST', // *GET, POST, PUT, DELETE, etc.
-          mode: 'cors', // no-cors, *cors, same-origin
-          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: 'same-origin', // include, *same-origin, omit
+          mode: 'no-cors', // no-cors, *cors, same-origin
           headers: {
             'Content-Type': 'application/json'
             // 'Content-Type': 'application/x-www-form-urlencoded',
@@ -56,7 +51,7 @@
           referrerPolicy: 'no-referrer', // no-referrer, *client
           body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
-        return response.json(); // parses JSON response into native JavaScript objects
+        return response; // parses JSON response into native JavaScript objects
       }
 
       
